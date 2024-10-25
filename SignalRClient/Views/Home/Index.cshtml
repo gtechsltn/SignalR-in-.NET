@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <h1>Real-Time Data</h1>
+    <ul id="messagesList"></ul>
+    
+    <script>
+        // Connect to the SignalR server
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:5001/realTimeHub") // Replace with your server URL and Hub route
+            .build();
+
+        // Define handlers for server-sent messages
+        connection.on("ReceiveMessage", (message) => {
+            const li = document.createElement("li");
+            li.textContent = `Message received: ${message}`;
+            document.getElementById("messagesList").appendChild(li);
+        });
+
+        connection.on("ReceiveData", (data) => {
+            const li = document.createElement("li");
+            li.textContent = `Data received: ${JSON.stringify(data)}`;
+            document.getElementById("messagesList").appendChild(li);
+        });
+
+        // Start the connection
+        connection.start()
+            .then(() => console.log("Connected to SignalR server"))
+            .catch(err => console.error("Connection error:", err));
+    </script>
+</div>
